@@ -1,6 +1,6 @@
 {
-    "name": "OH Bot Login Extension",
-    "description": "OH Bot Login Extension",
+    "name": "office-hours-queue-login",
+    "description": "office-hours-queue-login",
     "version": "1.0",
     "manifest_version": 3,
     "action": {

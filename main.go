@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -85,10 +86,68 @@ func login(client *resty.Client) {
 */
 func api_test(client *resty.Client, course_id string) {
 	// test case #1
+	// empty response
+	resp, err := client.R().
+		SetHeaders(map[string]string{
+			"accept":     "*/*",
+			"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
+		}).
+		Get("https://lvh.me:8080/api/queues/27xCqMHnGre0qrglCpa3pL1ag5Y/appointmentsummary")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// check for status 200
+	if resp.StatusCode() != 200 {
+		log.Fatal(fmt.Sprintf("incorrect status code\n%d", resp.StatusCode()))
+	}
+	if resp.String() != "[]" {
+		log.Fatal(fmt.Sprintf("incorrect response\n%s", resp.String()))
+	}
+
+	// test_case #2
+	// static `AppointmentSlot` slice
+
+	// resp, err := client.R().
+	// 	SetHeaders(map[string]string{
+	// 		"accept":     "*/*",
+	// 		"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
+	// 	}).
+	// 	Get("https://lvh.me:8080/api/queues/27xCqMHnGre0qrglCpa3pL1ag5Y/appointmentsummary")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// // check for status 200
+	// if resp.StatusCode() != 200 {
+	// 	log.Fatal(fmt.Sprintf("incorrect status code\n%d", resp.StatusCode()))
+	// }
+	// if resp.String() != "[{\"date\":\"2022-4-21\",\"available\":6,\"used\":4},{\"date\":\"2022-4-20\",\"available\":7,\"used\":5}]" {
+	// 	log.Fatal(fmt.Sprintf("incorrect response\n%s", resp.String()))
+	// }
+
+	// test_case #3
+	// data pulled from db
+
+	// resp, err := client.R().
+	// 	SetHeaders(map[string]string{
+	// 		"accept":     "*/*",
+	// 		"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
+	// 	}).
+	// 	Get("https://lvh.me:8080/api/queues/27xCqMHnGre0qrglCpa3pL1ag5Y/appointmentsummary")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// // check for status 200
+	// if resp.StatusCode() != 200 {
+	// 	log.Fatal(fmt.Sprintf("incorrect status code\n%d", resp.StatusCode()))
+	// }
+	// if resp.String() != "[{\"date\":\"2022-4-21\",\"available\":1,\"used\":1},{\"date\":\"2022-4-20\",\"available\":3,\"used\":2},{\"date\":\"2022-4-18\",\"available\":6,\"used\":3}]" {
+	// 	log.Fatal(fmt.Sprintf("incorrect response\n%s", resp.String()))
+	// }
 }
 
 func main() {
 	client := resty.New()
+	client.SetRootCertificate("lvh.me.pem")
 	client.SetTimeout(4 * time.Second)
 
 	go run_server()
